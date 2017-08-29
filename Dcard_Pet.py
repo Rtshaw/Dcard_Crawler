@@ -8,7 +8,7 @@ def key_word(metas):
 if __name__ == '__main__':
 
     dcard = Dcard()
-    metas = dcard.forums('pet').get_metas(num=100, callback=key_word)
+    metas = dcard.forums('pet').get_metas(num=150, callback=key_word)
     posts = dcard.posts(metas).get(comments=False, links=False)
 
     resources = posts.parse_resources()
