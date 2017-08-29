@@ -1,19 +1,17 @@
-import requests, json
+from dcard import Dcard
 
-page = 5
-counter = 0
 
-re = requests.get("https://www.dcard.tw/_api/forums/pet/posts", params={"popular":"false"})
-js = json.loads(re.text)
+def key_word(metas):
+    return [meta for meta in metas if '貓' in meta['title']]
 
-while counter < page:
-    for post in js:
-        if post["media"]:
-            for img in post["media"]:
-                reImg = requests.get(img["url"])
-                print(img["url"])
-                with open(img["url"].split("com/")[1], "wb") as f:
-                    f.write(reImg.content)
-    re = requests.get("https://www.dcard.tw/_api/forums/pet/posts", params={"popular":"false", "before":str(js[-1]["id"])})
-    js = json.loads(re.text)
-    counter += 1
+
+if __name__ == '__main__':
+
+    dcard = Dcard()
+    metas = dcard.forums('pet').get_metas(num=100, callback=key_word)
+    posts = dcard.posts(metas).get(comments=False, links=False)
+
+    resources = posts.parse_resources()
+
+    status, fails = posts.download(resources)
+    print('download success! ')
